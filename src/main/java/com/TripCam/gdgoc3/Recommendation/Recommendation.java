@@ -1,11 +1,11 @@
 package com.TripCam.gdgoc3.Recommendation;
 
+import com.TripCam.gdgoc3.Photo.Photo;
+import com.TripCam.gdgoc3.User.User;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
-import java.util.Date;
 
 @Entity
 @Getter
@@ -19,11 +19,13 @@ public class Recommendation {
     @Column(name = "recommendation_id", nullable = false)
     private Long recommendationId;
 
-    @Column(name = "photo_id2", nullable = false)
-    private Long photoId2;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "photo_id2", nullable = false)
+    private Photo photo;
 
-    @Column(name = "user_id2", nullable = false)
-    private Long userId2;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id2", nullable = false)
+    private User user;
 
     @Column(name = "recommendation_name", nullable = false, length = 255)
     private String recommendationName;
@@ -38,6 +40,5 @@ public class Recommendation {
     private Double longitude;
 
     @Column(name = "created_at", nullable = false, updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt = new Date();
+    private LocalDateTime createdAt = LocalDateTime.now();
 }

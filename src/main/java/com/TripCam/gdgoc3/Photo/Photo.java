@@ -3,15 +3,12 @@ package com.TripCam.gdgoc3.Photo;
 
 import com.TripCam.gdgoc3.User.User;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
-import java.util.Date;
 
 @Entity
 @Getter
@@ -25,14 +22,14 @@ public class Photo {
     private Long photoId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "image_url", nullable = false)
+    @Column(name = "image_url")
     private String imageUrl;
 
-    @Column(name = "analyzed_story", columnDefinition = "TEXT")
-    private String story;
+    @Column(name = "image", nullable = false, columnDefinition = "LONGTEXT")
+    private String base64image;
 
     @Column(name = "location_name")
     private String locationName;
@@ -40,11 +37,14 @@ public class Photo {
     @Column(name = "location_description", columnDefinition = "TEXT")
     private String description;
 
+    @Column(name = "analyzed_story", columnDefinition = "TEXT")
+    private String story;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt = new Date();
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(name = "is_recommended")
-    private boolean isRecommended;
+    private boolean isRecommended = false;
 
 }

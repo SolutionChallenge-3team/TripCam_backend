@@ -34,6 +34,12 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	implementation 'com.google.cloud:google-cloud-aiplatform:3.50.0'
+	implementation 'com.google.cloud:google-cloud-core:2.27.0'
+	implementation 'com.google.cloud:google-cloud-storage:2.29.1'
+	implementation 'com.google.cloud:google-cloud-vertexai:1.1.0'
+
 }
 
 tasks.named('test') {

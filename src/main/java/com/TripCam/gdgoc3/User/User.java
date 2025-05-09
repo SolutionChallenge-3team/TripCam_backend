@@ -24,11 +24,11 @@ public class User {
     private String email;
 
     @NotBlank(message = "닉네임은 필수입니다.")
-    @Column(nullable = false)
+    @Column(name = "nickname", nullable = false)
     private String nickname;
 
     @NotBlank(message = "닉네임은 필수입니다.")
-    @Column(nullable = false)
+    @Column(name = "realname", nullable = false)
     private String realname;
 
     //firebase 사용 시 필요한 변수값
@@ -38,7 +38,6 @@ public class User {
     @Column(name = "created_at", nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt = new Date();
-
 
     @Column(name = "updated_at", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)

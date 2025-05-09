@@ -5,13 +5,16 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Builder
 public class PhotoResponseDTO {
-    private Long photoId;
     private MultipartFile imageFile;
-    private String spaceNameDescription;
-    private String spaceStoryDescription;
+    private String spaceName;
+    private String spaceDescription;
+    private String spaceStory;
+    private LocalDateTime createdAt;
 
 }

@@ -1,6 +1,7 @@
 package com.TripCam.gdgoc3.Photo;
 
 import com.TripCam.gdgoc3.Photo.DTO.PhotoRequestDTO;
+import com.TripCam.gdgoc3.Photo.DTO.PhotoResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -9,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,9 +28,17 @@ public class PhotoController {
         try {
 
             Map<String, String> result = photoService.createAnalyze(image.getInputStream());
-            System.out.println("result = " + result);
 
-            return ResponseEntity.ok(Map.of("message", result));
+            Map<String, Object> response = new HashMap<>();
+
+            response.put("locationName", result.get("locationName"));
+            response.put("description", result.get("description"));
+            response.put("story", result.get("story"));
+            response.put("createdAt", LocalDateTime.now());
+            // response.put("imageFile", image);
+
+
+            return ResponseEntity.ok(response);
             // return null;
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));

@@ -63,7 +63,7 @@ public class PhotoService {
                 .build();
 
         GeminiReqDTO.Part textPart = GeminiReqDTO.Part.builder()
-                .text("사진의 장소 이름을 알려주고, 장소에 대한 설명을 50자 이내로 설명한 후 역사/문화적 스토리에 대해 설명해줘. 응답 형식은 json으로 {\"locationName\": 장소 이름, \"description\": 장소에 대한 50자 이내의 설명, \"story\": 역사/문화적 스토리} 이렇게 출력해줘. JSON으로만 응답해줘. 설명하지 말고, 마크다운 포맷이나 백틱(```)도 붙이지 마.")
+                .text("사진의 장소 이름을 알려주고, 장소에 대한 설명을 50자 이내로 설명한 후 역사/문화적 스토리에 대해 설명해줘. 응답 형식은 json으로 {\"locationName\": 장소 이름, \"description\": 장소에 대한 100자 이내의 문장 형태의 설명, \"story\": 6문장 내외의 역사/문화적 스토리} 이렇게 출력해줘. JSON으로만 응답해줘. 설명하지 말고, 마크다운 포맷이나 백틱(```)도 붙이지 마.")
                 .build();
 
         GeminiReqDTO.Content content = GeminiReqDTO.Content.builder()
@@ -114,7 +114,6 @@ public class PhotoService {
 
         photoRepository.save(photo);
         System.out.println("photo = " + photo);
-
 
         return part;
 

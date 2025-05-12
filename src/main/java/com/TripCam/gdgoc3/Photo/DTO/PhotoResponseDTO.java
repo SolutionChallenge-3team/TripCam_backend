@@ -9,12 +9,9 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@Builder
 public class PhotoResponseDTO {
-    private MultipartFile imageFile;
-    private String spaceName;
-    private String spaceDescription;
-    private String spaceStory;
-    private LocalDateTime createdAt;
-
+    private Long photoId;
+    private String locationName;
+    private String description;
+    private String story;
 }

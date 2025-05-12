@@ -1,6 +1,9 @@
 package com.TripCam.gdgoc3.Photo;
 
 import com.TripCam.gdgoc3.Photo.DTO.*;
+import com.TripCam.gdgoc3.Photo.Recommendation.Recommendation;
+import com.TripCam.gdgoc3.Photo.Recommendation.RecommendationRepository;
+import com.TripCam.gdgoc3.Photo.Recommendation.RecommendationSpaceDTO;
 import com.TripCam.gdgoc3.User.UserRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -27,7 +29,7 @@ import java.util.stream.Collectors;
 public class PhotoService {
     private final PhotoRepository photoRepository;
     private final UserRepository userRepository;
-    // private final GenerativeModel generativeModel;
+    private final RecommendationRepository recommendationRepository;
 
     @Qualifier("geminiRestTemplate")
     @Autowired
@@ -40,7 +42,7 @@ public class PhotoService {
     private String apiKey;
 
     @Transactional
-    public Map<String, String> createAnalyze(InputStream imageInputStream) throws IOException {
+    public PhotoResponseDTO createAnalyze(InputStream imageInputStream) throws IOException {
 
         // 주변장소 추천 기능 구현해야함
 
@@ -100,23 +102,115 @@ public class PhotoService {
         System.out.println("analysisResult = " + analysisResult);
 
 
-        Map<String, String> part = parseJsonText(analysisResult);
-
+        Map<String, String> photoResponse = parseJsonText(analysisResult);
 
         // 3. DB에 저장
         Photo photo = new Photo();
         // photo.setUser(user);
         photo.setBase64image(base64Image);
-        photo.setLocationName(part.get("locationName"));
-        photo.setDescription(part.get("description"));
-        photo.setStory(part.get("story"));
+        photo.setLocationName(photoResponse.get("locationName"));
+        photo.setDescription(photoResponse.get("description"));
+        photo.setStory(photoResponse.get("story"));
         photo.setCreatedAt(LocalDateTime.now());
 
         photoRepository.save(photo);
-        System.out.println("photo = " + photo);
 
-        return part;
+        PhotoResponseDTO responseDTO = new PhotoResponseDTO();
+        responseDTO.setPhotoId(photo.getPhotoId());
+        responseDTO.setLocationName(photoResponse.get("locationName"));
+        responseDTO.setDescription(photoResponse.get("description"));
+        responseDTO.setStory(photoResponse.get("story"));
 
+
+        return responseDTO;
+
+    }
+
+    // 장소 추천 기능
+    @Transactional
+    public List<RecommendationSpaceDTO> recommendNearby(Long photoId) throws IOException {
+        // 1. 해당 photo id 조회
+        Photo photo = photoRepository.findById(photoId)
+                .orElseThrow(() -> new IllegalArgumentException("Photo not found with id: \" + photoId"));
+
+        photo.setRecommended(true);
+
+        // 2. base64 이미지 가져오기
+        String base64Image = photo.getBase64image();
+
+
+        // 3. Gemini 요청 구성
+        GeminiReqDTO.Part.InlineData inlineData = GeminiReqDTO.Part.InlineData.builder()
+                .mime_type("image/jpeg")
+                .data(base64Image)
+                .build();
+
+        GeminiReqDTO.Part imagePart = GeminiReqDTO.Part.builder()
+                .inline_data(inlineData)
+                .build();
+
+        GeminiReqDTO.Part textPart = GeminiReqDTO.Part.builder()
+                .text("이 사진이 찍힌 장소의 주변 로컬 체험/소규모 전통 가게 등의 관광지를 5곳 추천해줘. 이름과 해당 관광지의 위도,경도, 100자 이내의 간단한 설명을 함께 알려줘. 응답 형식은 List로, 그 안에 json으로 장소값이 들어 있어야 해. [{\"recommendedName\" : 주변 관광지 이름, \"latitude\" : 위도, \"longitude\" : 경도, \"recommendedDescription\" : 100자 이내의 간단한 설명}, { ... } , ... ] 형식으로 작성해줘.")
+                .build();
+
+        GeminiReqDTO.Content content = GeminiReqDTO.Content.builder()
+                .role("user")
+                .parts(List.of(textPart, imagePart))
+                .build();
+
+        GeminiReqDTO requestDTO = new GeminiReqDTO(List.of(content));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<GeminiReqDTO> request = new HttpEntity<>(requestDTO, headers);
+        String requestUrl = apiUrl + "?key=" + apiKey;
+
+        ResponseEntity<GeminiResDTO> response = restTemplate.postForEntity(
+                requestUrl,
+                request,
+                GeminiResDTO.class
+        );
+
+        String recommendResult = "";
+
+        // 4. 결과 파싱
+        if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+            recommendResult = response.getBody().getCandidates()
+                    .get(0).getContent().getParts().get(0).getText();
+        } else {
+            throw new RuntimeException("Gemini Vision API 응답 오류: " + response.getStatusCode());
+        }
+        recommendResult = recommendResult.replaceAll("(?s)```json|```", "").trim();
+
+        String recommendationString = extractBracketContent(recommendResult);
+
+        System.out.println("recommendationString = " + recommendationString);
+
+
+        List<RecommendationSpaceDTO> recommendations = parseRecommendationList(recommendationString);
+
+        for (RecommendationSpaceDTO recommendation : recommendations) {
+
+
+            System.out.println("recommendation = " + recommendation);
+            Recommendation recommondation = new Recommendation();
+
+            recommondation.setPhoto(photo);
+            // recommondation.setUser(user);
+            recommondation.setRecommendationName(recommendation.getRecommendedName());
+            recommondation.setRecommendationDescription(recommendation.getRecommendedDescription());
+            recommondation.setLatitude(recommondation.getLatitude());
+            recommondation.setLongitude(recommondation.getLongitude());
+            recommondation.setCreatedAt(LocalDateTime.now());
+
+
+            recommendationRepository.save(recommondation);
+        }
+
+
+
+        return recommendations;
     }
 
     private String encodeImageToBase64(InputStream imageInputStream) throws IOException {
@@ -128,4 +222,29 @@ public class PhotoService {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(jsonText, new TypeReference<Map<String, String>>() {});
     }
+
+    private List<RecommendationSpaceDTO> parseRecommendationList(String recommendResult) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.readValue(recommendResult, new TypeReference<List<RecommendationSpaceDTO>>() {});
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String extractBracketContent(String input) {
+        System.out.println("input = " + input);
+        int start = input.indexOf('[');
+        int end = input.lastIndexOf(']');
+
+        if (start != -1 && end != -1 && start < end) {
+            return input.substring(start, end + 1);
+        }
+
+        // 유효한 범위가 없으면 원본 반환 또는 빈 문자열
+        return input;
+    }
+
+
+
 }

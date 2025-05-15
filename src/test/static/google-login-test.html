@@ -1,0 +1,42 @@
+<!-- google-login-test.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Firebase Google Login Test</title>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+</head>
+<body>
+<h2>Google Login Test</h2>
+<button onclick="login()">Login with Google</button>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyBmlfUp-g_p15c19fZzsyoqrjVxFcRu5fo",
+        authDomain: "tripcam-6bb9b.firebaseapp.com",
+    };
+
+    firebase.initializeApp(firebaseConfig);
+
+    async function login() {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        try {
+            const result = await firebase.auth().signInWithPopup(provider);
+            const token = await result.user.getIdToken();
+            console.log("ID TOKEN:", token);
+
+            // 여기가 중요: Spring 서버로 토큰 전송
+            fetch("http://localhost:8080/api/auth/firebase", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ idToken: token })
+            }).then(res => res.text()).then(console.log);
+        } catch (e) {
+            console.error(e);
+        }
+    }
+</script>
+</body>
+</html>

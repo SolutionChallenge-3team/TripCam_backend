@@ -1,7 +1,7 @@
 package com.TripCam.gdgoc3.Photo;
 
 
-import com.TripCam.gdgoc3.User.User;
+import com.TripCam.gdgoc3.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;

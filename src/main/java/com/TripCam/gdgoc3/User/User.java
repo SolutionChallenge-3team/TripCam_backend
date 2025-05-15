@@ -1,4 +1,4 @@
-package com.TripCam.gdgoc3.User;
+package com.TripCam.gdgoc3.user;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;

@@ -1,7 +1,7 @@
 package com.TripCam.gdgoc3.Recommendation;
 
 import com.TripCam.gdgoc3.Photo.Photo;
-import com.TripCam.gdgoc3.User.User;
+import com.TripCam.gdgoc3.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,10 +33,10 @@ public class Recommendation {
     @Column(name = "recommendation_description", columnDefinition = "TEXT")
     private String recommendationDescription;
 
-    @Column(name = "latitude", nullable = false, precision = 10, scale = 7)
+    @Column(name = "latitude", nullable = false)
     private Double latitude;
 
-    @Column(name = "longitude", nullable = false, precision = 10, scale = 7)
+    @Column(name = "longitude", nullable = false)
     private Double longitude;
 
     @Column(name = "created_at", nullable = false, updatable = false)

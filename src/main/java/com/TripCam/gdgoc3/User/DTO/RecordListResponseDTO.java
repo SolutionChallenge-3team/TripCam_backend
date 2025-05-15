@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class RecordListResponseDTO {
     private User user;
     private Long photoId;
-    private String image;
+    private byte[] image;
     private String locationName;
     private LocalDateTime date;
 }

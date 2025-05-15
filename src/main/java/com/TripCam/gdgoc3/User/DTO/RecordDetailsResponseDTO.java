@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class RecordDetailsResponseDTO {
     private Long photoId;
-    private String base64image;
+    private byte[] base64image;
     private String locationName;
     private String description;
     private String story;

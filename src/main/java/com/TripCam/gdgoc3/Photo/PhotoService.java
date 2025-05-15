@@ -4,6 +4,7 @@ import com.TripCam.gdgoc3.Photo.DTO.*;
 import com.TripCam.gdgoc3.Photo.Recommendation.Recommendation;
 import com.TripCam.gdgoc3.Photo.Recommendation.RecommendationRepository;
 import com.TripCam.gdgoc3.Photo.Recommendation.RecommendationSpaceDTO;
+import com.TripCam.gdgoc3.User.User;
 import com.TripCam.gdgoc3.User.UserRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -104,9 +105,14 @@ public class PhotoService {
 
         Map<String, String> photoResponse = parseJsonText(analysisResult);
 
+        Long userId = 1L;
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
         // 3. DB에 저장
         Photo photo = new Photo();
-        // photo.setUser(user);
+        photo.setUser(user);
         photo.setBase64image(base64Image);
         photo.setLocationName(photoResponse.get("locationName"));
         photo.setDescription(photoResponse.get("description"));
@@ -194,18 +200,26 @@ public class PhotoService {
 
 
             System.out.println("recommendation = " + recommendation);
-            Recommendation recommondation = new Recommendation();
-
-            recommondation.setPhoto(photo);
-            // recommondation.setUser(user);
-            recommondation.setRecommendationName(recommendation.getRecommendedName());
-            recommondation.setRecommendationDescription(recommendation.getRecommendedDescription());
-            recommondation.setLatitude(recommondation.getLatitude());
-            recommondation.setLongitude(recommondation.getLongitude());
-            recommondation.setCreatedAt(LocalDateTime.now());
 
 
-            recommendationRepository.save(recommondation);
+            Recommendation recomm = new Recommendation();
+
+            Long userId = 1L;
+
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+            recomm.setPhoto(photo);
+            recomm.setUser(user);
+            // recomm.setRecommendationId(recommendation.getRecommendationId());
+            recomm.setRecommendationName(recommendation.getRecommendedName());
+            recomm.setRecommendationDescription(recommendation.getRecommendedDescription());
+            recomm.setLatitude(recommendation.getLatitude());
+            recomm.setLongitude(recommendation.getLongitude());
+            recomm.setCreatedAt(LocalDateTime.now());
+
+
+            recommendationRepository.save(recomm);
         }
 
 

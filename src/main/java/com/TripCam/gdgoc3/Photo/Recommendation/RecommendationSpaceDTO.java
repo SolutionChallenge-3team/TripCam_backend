@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RecommendationSpaceDTO {
+    private Long recommendationId;
     private String recommendedName;
     private BigDecimal latitude;
     private BigDecimal longitude;

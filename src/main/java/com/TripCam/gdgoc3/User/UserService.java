@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @Service
@@ -27,9 +28,14 @@ public class UserService {
         List<RecordListResponseDTO> list = new ArrayList<>();
 
         for(Photo photo : photos) {
+
+            String imageByte = photo.getBase64image();
+            byte[] imageBytes = Base64.getDecoder().decode(imageByte);
+
+
             RecordListResponseDTO listResponseDTO = new RecordListResponseDTO();
             listResponseDTO.setUser(user);
-            listResponseDTO.setImage(photo.getBase64image());
+            listResponseDTO.setImage(imageBytes);
             listResponseDTO.setDate(photo.getCreatedAt());
             listResponseDTO.setLocationName(photo.getLocationName());
             listResponseDTO.setPhotoId(photo.getPhotoId());
@@ -52,9 +58,13 @@ public class UserService {
                 break;
             }
         }
+
+        String imageByte = thePhoto.getBase64image();
+        byte[] imageBytes = Base64.getDecoder().decode(imageByte);
+
         RecordDetailsResponseDTO recordDetailsResponseDTO = new RecordDetailsResponseDTO();
         recordDetailsResponseDTO.setPhotoId(photoId);
-        recordDetailsResponseDTO.setBase64image(thePhoto.getBase64image());
+        recordDetailsResponseDTO.setBase64image(imageBytes);
         recordDetailsResponseDTO.setLocationName(thePhoto.getLocationName());
         recordDetailsResponseDTO.setDescription(thePhoto.getDescription());
         recordDetailsResponseDTO.setStory(thePhoto.getStory());

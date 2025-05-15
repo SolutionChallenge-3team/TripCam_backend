@@ -7,8 +7,5 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 @Setter
 public class PhotoRequestDTO {
-    private long photoId;
-    //private long userId;
-    // private String imageUrl;
     private MultipartFile image;
 }

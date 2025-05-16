@@ -156,7 +156,7 @@ public class PhotoService {
                 .build();
 
         GeminiReqDTO.Part textPart = GeminiReqDTO.Part.builder()
-                .text("이 사진이 찍힌 장소의 주변 로컬 체험/소규모 전통 가게 등의 관광지를 5곳 추천해줘. 이름과 해당 관광지의 위도,경도, 100자 이내의 간단한 설명을 함께 알려줘. 응답 형식은 List로, 그 안에 json으로 장소값이 들어 있어야 해. [{\"recommendedName\" : 주변 관광지 이름, \"latitude\" : 위도, \"longitude\" : 경도, \"recommendedDescription\" : 100자 이내의 간단한 설명}, { ... } , ... ] 형식으로 작성해줘.")
+                .text("이 사진이 찍힌 장소의 주변 로컬 체험/소규모 전통 가게 등의 관광지를 5곳 추천해줘. 이름과 해당 관광지의 위도, 경도, 100자 이내의 간단한 설명을 함께 알려줘. 만약 위치를 특정할 수 없다면 서울의 주변 로컬 체험/소규모 전통 가게 등의 관광지를 5곳 추천해줘. 응답 형식은 List로, 그 안에 json으로 장소값이 들어 있어야 해. [{\"recommendedName\" : 주변 관광지 이름, \"latitude\" : 위도, \"longitude\" : 경도, \"recommendedDescription\" : 100자 이내의 간단한 설명}, { ... } , ... ] 형식으로 작성해줘.")
                 .build();
 
         GeminiReqDTO.Content content = GeminiReqDTO.Content.builder()
@@ -221,8 +221,6 @@ public class PhotoService {
 
             recommendationRepository.save(recomm);
         }
-
-
 
         return recommendations;
     }

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import java.util.Date;
-
+import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
@@ -35,11 +35,9 @@ public class User {
     @Column(name = "uid", nullable = false)
     private String uid;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt = new Date();
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
 
     @Column(name = "updated_at", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt = new Date();
+    private LocalDateTime updatedAt;
 }

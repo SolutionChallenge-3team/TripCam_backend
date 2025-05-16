@@ -40,6 +40,13 @@ dependencies {
 	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5' // JSON 처리를 위한 jackson 사용
 
+
+	implementation 'com.google.cloud:google-cloud-aiplatform:3.50.0'
+	implementation 'com.google.cloud:google-cloud-core:2.27.0'
+	implementation 'com.google.cloud:google-cloud-storage:2.29.1'
+	implementation 'com.google.cloud:google-cloud-vertexai:1.1.0'
+
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 }
 
 tasks.named('test') {

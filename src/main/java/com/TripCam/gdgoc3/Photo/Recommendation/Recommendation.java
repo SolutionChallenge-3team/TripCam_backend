@@ -1,10 +1,11 @@
-package com.TripCam.gdgoc3.Recommendation;
+package com.TripCam.gdgoc3.Photo.Recommendation;
 
 import com.TripCam.gdgoc3.Photo.Photo;
 import com.TripCam.gdgoc3.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -12,7 +13,6 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class Recommendation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,11 +33,11 @@ public class Recommendation {
     @Column(name = "recommendation_description", columnDefinition = "TEXT")
     private String recommendationDescription;
 
-    @Column(name = "latitude", nullable = false)
-    private Double latitude;
+    @Column(name = "latitude", nullable = false, precision = 10, scale = 7)
+    private BigDecimal latitude;
 
-    @Column(name = "longitude", nullable = false)
-    private Double longitude;
+    @Column(name = "longitude", nullable = false, precision = 10, scale = 7)
+    private BigDecimal longitude;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
